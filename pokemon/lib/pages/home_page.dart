@@ -101,7 +101,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Favourites",
             style: TextStyle(
               fontSize: 25,
@@ -118,6 +118,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   SizedBox(
                     height: MediaQuery.sizeOf(context).height * 0.48,
                     child: GridView.builder(
+                      scrollDirection: Axis.horizontal,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,

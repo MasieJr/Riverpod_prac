@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokemon/models/pokemon.dart';
 import 'package:pokemon/providers/pokemon_data_providers.dart';
+import 'package:pokemon/widgets/pokemon_stats_card.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class PokemonListTile extends ConsumerWidget {
@@ -52,39 +53,53 @@ class PokemonListTile extends ConsumerWidget {
   ) {
     return Skeletonizer(
       enabled: isLoading,
-      child: ListTile(
-        leading: pokemon != null
-            ? CircleAvatar(
-                backgroundImage: NetworkImage(
-                  pokemon.sprites!.frontDefault!,
-                ),
-              )
-            : CircleAvatar(),
-        title: Text(
-          pokemon != null
-              ? pokemon.name!.toUpperCase()
-              : "Failed to load pokemons, Please wait",
-        ),
-        subtitle: Text(
-          "Has ${pokemon?.moves?.length.toString() ?? 0} moves",
-        ),
-        trailing: IconButton(
-          onPressed: () {
-            if (_favouritePokemons.contains(pokemanURL)) {
-              _favouritePokemonsProvider.removeFavouritePokemon(
-                pokemanURL,
-              );
-            } else {
-              _favouritePokemonsProvider.addFavouritePokemon(
-                pokemanURL,
-              );
-            }
-          },
-          icon: Icon(
-            _favouritePokemons.contains(pokemanURL)
-                ? Icons.favorite
-                : Icons.favorite_border,
-            color: Colors.red,
+      child: GestureDetector(
+        onTap: () {
+          if (!isLoading) {
+            showDialog(
+              context: context,
+              builder: (_) {
+                return PokemonStatsCard(
+                  pokemanURL: pokemanURL,
+                );
+              },
+            );
+          }
+        },
+        child: ListTile(
+          leading: pokemon != null
+              ? CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    pokemon.sprites!.frontDefault!,
+                  ),
+                )
+              : CircleAvatar(),
+          title: Text(
+            pokemon != null
+                ? pokemon.name!.toUpperCase()
+                : "Failed to load pokemons, Please wait",
+          ),
+          subtitle: Text(
+            "Has ${pokemon?.moves?.length.toString() ?? 0} moves",
+          ),
+          trailing: IconButton(
+            onPressed: () {
+              if (_favouritePokemons.contains(pokemanURL)) {
+                _favouritePokemonsProvider.removeFavouritePokemon(
+                  pokemanURL,
+                );
+              } else {
+                _favouritePokemonsProvider.addFavouritePokemon(
+                  pokemanURL,
+                );
+              }
+            },
+            icon: Icon(
+              _favouritePokemons.contains(pokemanURL)
+                  ? Icons.favorite
+                  : Icons.favorite_border,
+              color: Colors.red,
+            ),
           ),
         ),
       ),
