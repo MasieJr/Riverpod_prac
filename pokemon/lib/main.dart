@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pokemon/pages/home_page.dart';
+import 'package:pokemon/services/http_service.dart';
 
-void main() {
+void main() async {
+  await _setupServices();
   runApp(const MyApp());
+}
+
+Future<void> _setupServices() async {
+  GetIt.instance.registerSingleton<HttpService>(
+    HttpService(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,13 +22,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return ProviderScope(
+      child: MaterialApp(
+        title: 'Pokedex',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
+          useMaterial3: true,
+          textTheme: GoogleFonts.quattrocentoSansTextTheme(),
+        ),
+        home: HomePage(),
       ),
-      home: const HomePage(),
     );
   }
 }
