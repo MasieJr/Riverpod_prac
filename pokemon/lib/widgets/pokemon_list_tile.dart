@@ -6,13 +6,21 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class PokemonListTile extends ConsumerWidget {
   final String pokemanURL;
-  const PokemonListTile({super.key, required this.pokemanURL});
+  late FavouritePokemonsProvider _favouritePokemonsProvider;
+  late List<String> _favouritePokemons;
+  PokemonListTile({super.key, required this.pokemanURL});
 
   @override
   Widget build(
     BuildContext context,
     WidgetRef ref,
   ) {
+    _favouritePokemonsProvider = ref.watch(
+      favouritePokemonsProvider.notifier,
+    );
+    _favouritePokemons = ref.watch(
+      favouritePokemonsProvider,
+    );
     final pokemon = ref.watch(
       pokemonDataProvider(
         pokemanURL,
@@ -43,10 +51,41 @@ class PokemonListTile extends ConsumerWidget {
     Pokemon? pokemon,
   ) {
     return Skeletonizer(
-      enabled: true,
+      enabled: isLoading,
       child: ListTile(
+        leading: pokemon != null
+            ? CircleAvatar(
+                backgroundImage: NetworkImage(
+                  pokemon.sprites!.frontDefault!,
+                ),
+              )
+            : CircleAvatar(),
         title: Text(
-          pokemanURL,
+          pokemon != null
+              ? pokemon.name!.toUpperCase()
+              : "Failed to load pokemons, Please wait",
+        ),
+        subtitle: Text(
+          "Has ${pokemon?.moves?.length.toString() ?? 0} moves",
+        ),
+        trailing: IconButton(
+          onPressed: () {
+            if (_favouritePokemons.contains(pokemanURL)) {
+              _favouritePokemonsProvider.removeFavouritePokemon(
+                pokemanURL,
+              );
+            } else {
+              _favouritePokemonsProvider.addFavouritePokemon(
+                pokemanURL,
+              );
+            }
+          },
+          icon: Icon(
+            _favouritePokemons.contains(pokemanURL)
+                ? Icons.favorite
+                : Icons.favorite_border,
+            color: Colors.red,
+          ),
         ),
       ),
     );
